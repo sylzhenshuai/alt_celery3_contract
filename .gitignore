@@ -1,0 +1,29 @@
+# ---------- Python 编译产物 ----------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+
+# ---------- 构建产物 ----------
+build/
+dist/
+site/
+
+# ---------- 虚拟环境 ----------
+.venv/
+venv/
+env/
+.conda/
+
+# ---------- 工具缓存 ----------
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# ---------- 编辑器 ----------
+.idea/
+.vscode/
+*.swp

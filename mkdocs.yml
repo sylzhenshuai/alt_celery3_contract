@@ -1,0 +1,44 @@
+# ============================================================
+# MkDocs 站点配置（由 Read the Docs 调用，也可本地预览）
+# 本地预览: mkdocs serve
+# ============================================================
+site_name: alt-celery3-contract
+site_description: alt_celery3 的纯声明式强类型 Celery 任务契约包
+site_url: https://alt-celery3-contract.readthedocs.io/
+repo_url: https://github.com/example/alt_celery3_contract
+docs_dir: docs
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.instant
+    - navigation.top
+    - content.code.copy
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            members_order: source
+            separate_signature: true
+            merge_init_into_class: true
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+
+nav:
+  - 首页: index.md
+  - API 参考: api.md
+  - 校验指南: verification.md

@@ -1,0 +1,17 @@
+# ============================================================
+# Conda 环境定义（environment.yml）
+# 创建: conda env create -f environment.yml
+# 更新: conda env update -f environment.yml --prune
+# ============================================================
+name: alt_celery3_contract
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.13
+  - pip>=25.0
+  - pip:
+      # 以可编辑模式安装本包并附带开发 + 文档依赖
+      - -e .[dev,docs]

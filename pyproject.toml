@@ -1,0 +1,124 @@
+# ============================================================
+# alt-celery3-contract —— 跨服务 Celery 任务契约包
+# 遵循 PEP 517（构建后端接口）/ PEP 518（build-system 声明）/
+# PEP 621（[project] 元数据）/ PEP 639（SPDX 许可证表达式）
+# 构建: python -m build      安装: pip install -e ".[dev]"
+# ============================================================
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "alt-celery3-contract"
+version = "1.0.0"
+description = "alt_celery3 的纯声明式强类型 Celery 任务契约：任务名常量、Pydantic 入参模型与 TASK_CATALOG 目录"
+readme = "README.md"
+requires-python = ">=3.13"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "alt_celery3 maintainers" }]
+keywords = ["celery", "contract", "pydantic", "typing", "cross-service", "dto"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Distributed Computing",
+    "Typing :: Typed",
+]
+dependencies = [
+    "pydantic>=2.9,<3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "mypy>=1.14",
+    "ruff>=0.9",
+    "build>=1.2",
+]
+docs = [
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=0.27",
+]
+
+[project.urls]
+Homepage = "https://github.com/example/alt_celery3_contract"
+Documentation = "https://alt-celery3-contract.readthedocs.io/"
+Repository = "https://github.com/example/alt_celery3_contract"
+Changelog = "https://github.com/example/alt_celery3_contract/releases"
+
+[project.scripts]
+alt-celery3-contract-verify = "alt_celery3_contract.verify:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/alt_celery3_contract"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/",
+    "tests/",
+    "scripts/",
+    "docs/",
+    "mkdocs.yml",
+    ".readthedocs.yaml",
+    "README.md",
+    "LICENSE",
+]
+
+# ---------- Ruff 静态检查 ----------
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "UP", # pyupgrade
+    "D",  # pydocstyle（Google 风格）
+    "ANN",# flake8-annotations
+]
+ignore = [
+    "D203", # 与 D211 冲突，Google 风格不使用 D203
+    "D213", # 与 D212 冲突，Google 风格使用 D212
+    "D415", # 中文 docstring 首行以「。」收尾，不强制英文标点
+    "ANN401", # 允许 Any 作为动态返回值类型
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+# ---------- mypy 类型检查 ----------
+[tool.mypy]
+python_version = "3.13"
+strict = true
+warn_unused_ignores = true
+show_error_codes = true
+files = ["src", "scripts"]
+
+# ---------- pytest ----------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --strict-markers"
+filterwarnings = ["error"]
+
+# ---------- coverage ----------
+[tool.coverage.run]
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = ["pragma: no cover", "raise NotImplementedError", "if TYPE_CHECKING:"]

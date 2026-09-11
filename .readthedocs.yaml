@@ -1,0 +1,23 @@
+# ============================================================
+# Read the Docs 托管配置（配置即代码，RTD v2 规范）
+# 文档站点: MkDocs + mkdocs-material + mkdocstrings（Google 风格 docstring）
+# 预览地址: https://<your-project>.readthedocs.io/
+# ============================================================
+version: 2
+
+build:
+  os: ubuntu-24.04
+  tools:
+    python: "3.13"
+
+mkdocs:
+  configuration: mkdocs.yml
+  fail_on_warning: true
+
+python:
+  install:
+    # 以可编辑模式安装本包，并带上文档构建所需的额外依赖
+    - method: pip
+      path: .
+      extra_requirements:
+        - docs
