@@ -38,19 +38,27 @@ alt_celery3_contract/
 
 ## 安装
 
+> 本包**未发布到 PyPI**，`pip install alt-celery3-contract` 会失败；请从
+> GitHub 或本地源码安装。
+
 ```bash
-# 1) pip（推荐开发模式）
+# 1) 从 GitHub 安装（默认 main 分支）
+pip install "alt-celery3-contract @ git+https://github.com/sylzhenshuai/alt_celery3_contract.git"
+
+# 2) 本地源码开发模式（推荐，含开发与文档依赖）
 pip install -e ".[dev,docs]"
 
-# 2) 传统依赖清单
+# 3) 传统依赖清单
 pip install -r requirements.txt
 
-# 3) Conda
+# 4) Conda
 conda env create -f environment.yml
 
-# 4) 构建 wheel / sdist
+# 5) 构建 wheel / sdist（产物在 dist/）
 python -m build
 ```
+
+仓库地址：<https://github.com/sylzhenshuai/alt_celery3_contract>
 
 ## 快速开始
 
@@ -179,7 +187,10 @@ mkdocs serve    # 本地预览 http://127.0.0.1:8000
 
 ## 相关项目
 
-- [`alt_celery3`](../alt_celery3)：任务的服务端实现（Docker + Celery + Redis + Flower）。
+- **本仓库**：<https://github.com/sylzhenshuai/alt_celery3_contract>
+- `alt_celery3`：任务的服务端实现（Docker + Celery + Redis + Flower）。
+  契约包未发布 PyPI，该项目按既有的「离线 wheels」约定，从本项目构建 wheel
+  后放入其 `wheels/` 目录离线安装。
 
 ## 许可证
 

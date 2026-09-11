@@ -611,15 +611,17 @@ def _inspect_candidate(candidate: _TaskCandidate, source_root: Path) -> SourceTa
     except (TypeError, ValueError):
         return None
 
+    raw_params = list(signature.parameters.values())
+    # Celery 在 bind=True 时会把 ``run`` 绑定为方法（首参 self 已被绑定机制移除），
+    # 此时不能再剥离；只有拿到未绑定的普通函数时才需要手动剥离任务实例首参。
+    if candidate.bind and raw_params and not inspect.ismethod(func):
+        raw_params = raw_params[1:]
     params = [
         param
-        for param in signature.parameters.values()
+        for param in raw_params
         if param.kind
         not in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD)
     ]
-    # bind=True 时 Celery 会把任务实例作为首参传入，契约侧需剥离该参数
-    if candidate.bind and params:
-        params = params[1:]
     docstring = inspect.getdoc(func) or candidate.description
 
     return SourceTask(

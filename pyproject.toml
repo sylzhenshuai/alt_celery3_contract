@@ -48,10 +48,10 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/example/alt_celery3_contract"
+Homepage = "https://github.com/sylzhenshuai/alt_celery3_contract"
 Documentation = "https://alt-celery3-contract.readthedocs.io/"
-Repository = "https://github.com/example/alt_celery3_contract"
-Changelog = "https://github.com/example/alt_celery3_contract/releases"
+Repository = "https://github.com/sylzhenshuai/alt_celery3_contract"
+Changelog = "https://github.com/sylzhenshuai/alt_celery3_contract/releases"
 
 [project.scripts]
 alt-celery3-contract-verify = "alt_celery3_contract.verify:main"

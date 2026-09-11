@@ -5,7 +5,9 @@
 site_name: alt-celery3-contract
 site_description: alt_celery3 的纯声明式强类型 Celery 任务契约包
 site_url: https://alt-celery3-contract.readthedocs.io/
-repo_url: https://github.com/example/alt_celery3_contract
+repo_url: https://github.com/sylzhenshuai/alt_celery3_contract
+repo_name: sylzhenshuai/alt_celery3_contract
+edit_uri: edit/main/docs/
 docs_dir: docs
 
 theme:

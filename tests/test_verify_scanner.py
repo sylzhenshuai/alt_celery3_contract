@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import sys
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -105,3 +107,70 @@ def test_scanner_rejects_unknown_mode(tmp_path: Path) -> None:
     """非法的签名后端取值应抛出 ``ValueError``。"""
     with pytest.raises(ValueError, match="mode"):
         discover_source_tasks(_build_source_tree(tmp_path), "magic")
+
+
+CELERY_LIKE_MODULE = '''"""模拟 Celery Task 实例形态：bind=True 时 run 为绑定方法。"""
+
+from __future__ import annotations
+
+from typing import Any
+
+from alt_celery3_contract import TaskName
+
+
+class _FakeTask:
+    """模拟 Celery 的 Task 实例。"""
+
+    def __init__(self, name: str, func: Any, bind: bool) -> None:
+        self.name = name
+        # 与真实 Celery 一致：bind 任务取 run 得到绑定方法（self 已被移除），
+        # 非 bind 任务取 run 得到不含 self 的普通函数
+        self.run = func.__get__(self) if bind else func
+
+
+def task(name: str | None = None, bind: bool = False) -> Any:
+    """模拟 ``@celery_app.task`` 装饰器。"""
+
+    def decorator(func: Any) -> _FakeTask:
+        return _FakeTask(name or func.__name__, func, bind)
+
+    return decorator
+
+
+@task(name=TaskName.ADD.value)
+def add(x: float, y: float) -> float:
+    """非 bind 任务。"""
+    return x + y
+
+
+@task(name=TaskName.SIMU_NCEE.value, bind=True)
+def simu_ncee(self: Any, year: int, threads: int | None = None) -> dict[str, Any]:
+    """bind 任务：契约侧应只保留 year / threads。"""
+    return {}
+'''
+
+
+@pytest.fixture(autouse=True)
+def _purge_imported_source_modules() -> Iterator[None]:
+    """清理被校验器导入的 ``app.*`` 模块，避免临时源项目之间相互污染。"""
+    yield
+    for name in [key for key in sys.modules if key == "app" or key.startswith("app.")]:
+        sys.modules.pop(name, None)
+
+
+def test_inspect_backend_keeps_bind_params_intact(tmp_path: Path) -> None:
+    """``inspect`` 后端不得对已绑定的 ``run`` 方法重复剥离首参。"""
+    tasks_dir = tmp_path / "app" / "tasks"
+    tasks_dir.mkdir(parents=True)
+    (tmp_path / "app" / "__init__.py").write_text("", encoding="utf-8")
+    (tasks_dir / "__init__.py").write_text("", encoding="utf-8")
+    (tasks_dir / "demo_tasks.py").write_text(CELERY_LIKE_MODULE, encoding="utf-8")
+
+    tasks, backend = discover_source_tasks(tmp_path, "inspect")
+    found = {task.name: task for task in tasks}
+
+    assert backend == "inspect"
+    assert set(found) == {"tasks.add", "tasks.simu_ncee"}
+    assert [param.name for param in found["tasks.add"].params] == ["x", "y"]
+    # 关键回归点：year 不能因为重复剥离 self 而丢失
+    assert [param.name for param in found["tasks.simu_ncee"].params] == ["year", "threads"]
